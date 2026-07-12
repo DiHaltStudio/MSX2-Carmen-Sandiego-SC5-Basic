@@ -67,13 +67,20 @@ Cada accion consume tiempo:
 - Calcular orden: 1 hora.
 - Arrestar en ciudad incorrecta: 2 horas.
 
-El limite inicial es de 72 horas. Cada nueva detencion reduce el limite del siguiente caso en 4 horas:
+El limite de cada caso se calcula al generarlo con:
 
-- Caso 1: 72 horas.
-- Caso 2: 68 horas.
-- Caso 3: 64 horas.
-- Caso 4: 60 horas.
-- Caso 5: 56 horas.
+```basic
+TL=72-(AR*4+2)
+```
+
+`AR` contiene el numero de detenciones ya logradas. Por tanto, el primer caso
+empieza con 70 horas y cada nueva detencion reduce el siguiente limite en 4:
+
+- Caso 1: 70 horas.
+- Caso 2: 66 horas.
+- Caso 3: 62 horas.
+- Caso 4: 58 horas.
+- Caso 5: 54 horas.
 
 ## Orden De Arresto
 
