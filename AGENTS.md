@@ -16,6 +16,8 @@ Crear una version simplificada tipo "Where in the World is Carmen Sandiego" para
 - La imagen de ciudad se carga desde disco una sola vez al entrar en la ciudad y queda cacheada en VRAM pagina 1.
 - Los repintados del menu principal copian la imagen de ciudad desde VRAM pagina 1 a VRAM pagina 0, sin volver a leer disco.
 - `OPENING.SC5` contiene la pantalla de apertura y se muestra con `BLOAD"OPENING.SC5",S`.
+- Al cerrar la apertura se cargan `VRAM1.SC5`, `VRAM2.SC5` y `VRAM3.SC5` en las paginas 1, 2 y 3.
+- Los tres bancos contienen la paleta del juego, que se activa con `COLOR=RESTORE`.
 - La ruta de cada caso se genera al azar sin repetir ciudad.
 - Las opciones de vuelo se generan al azar desde las ciudades de la BD, sin repetir opcion ni incluir la ciudad actual.
 - Si el jugador se sale de la ruta correcta, una de las opciones de vuelo permite volver a la ciudad de la pista activa.
@@ -141,12 +143,13 @@ Cada rutina llamada por `GOSUB` debe empezar con una linea `REM` simple.
 
 ## Graficos SC5
 
-El juego trabaja en `SCREEN 5`. La pagina visible es la pagina 0. La pagina 1 se usa como cache temporal de la imagen de la ciudad actual.
+El juego trabaja en `SCREEN 5`. La pagina visible es la pagina 0. Las paginas 1, 2 y 3 contienen los bancos graficos `VRAM1.SC5` a `VRAM3.SC5`. La zona vacia `(156,156)-(255,255)` de la pagina 1 se usa como cache temporal de la imagen de la ciudad actual.
 
 ### Apertura
 
 - `2500` muestra la apertura.
 - Actualmente se usa `BLOAD"OPENING.SC5",S`.
+- Despues de borrar la apertura se cargan los tres bancos VRAM sin hacer visibles sus paginas.
 - No cambiar la paleta desde BASIC salvo que se restaure antes de continuar el juego.
 - Si se experimenta con paletas, verificar en MSX2/emulador que la pantalla posterior vuelve a colores normales.
 
@@ -160,14 +163,14 @@ La rutina `2400` muestra la imagen de la ciudad en el menu principal.
 - La copia visible se hace con:
 
 ```basic
-COPY (156,104)-(255,203),1 TO (156,104),0
+COPY (156,156)-(255,255),1 TO (156,104),0
 ```
 
 La rutina `2460` carga desde disco solo al entrar o cambiar de ciudad.
 
 - Construye `FI$` como `IMGxxx.SC5`.
 - Cambia a pagina activa 1 con `SET PAGE 0,1`.
-- Carga la imagen en la misma posicion de pantalla con `COPY FI$ TO (156,104)`.
+- Carga la imagen en el hueco inferior derecho con `COPY FI$ TO (156,156)`.
 - Restaura pagina visible/activa con `SET PAGE 0,0`.
 - Actualiza `IC=CP`.
 
