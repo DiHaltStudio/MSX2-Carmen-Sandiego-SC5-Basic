@@ -109,6 +109,8 @@ Controles:
 - Cursor arriba mueve el selector hacia arriba.
 - Espacio o RETURN selecciona.
 - Se mantiene entrada numerica como respaldo rapido de prueba.
+- Al mover el selector solo se borra el `>` anterior y se dibuja el nuevo; no se repintan las opciones.
+- El menu principal limpia solo su zona izquierda para no borrar la imagen de ciudad situada a la derecha.
 
 En el menu `VIAJAR`, la ultima opcion debe ser siempre `NO VIAJAR`. Esa opcion vuelve al menu principal sin cambiar de ciudad y sin gastar tiempo.
 
@@ -138,12 +140,13 @@ En el menu `VIAJAR`, la ultima opcion debe ser siempre `NO VIAJAR`. Esa opcion v
 - `2300-2399`: menu generico con cursor.
 - `2400-2499`: imagen de ciudad y cache VRAM.
 - `2500-2599`: apertura.
+- `2600-2699`: texto 6x6 desde la fuente de VRAM pagina 3.
 
 Cada rutina llamada por `GOSUB` debe empezar con una linea `REM` simple.
 
 ## Graficos SC5
 
-El juego trabaja en `SCREEN 5`. La pagina visible es la pagina 0. Las paginas 1, 2 y 3 contienen los bancos graficos `VRAM1.SC5` a `VRAM3.SC5`. La zona vacia `(156,156)-(255,255)` de la pagina 1 se usa como cache temporal de la imagen de la ciudad actual.
+El juego trabaja en `SCREEN 5`. La pagina visible es la pagina 0. Las paginas 1, 2 y 3 contienen los bancos graficos `VRAM1.SC5` a `VRAM3.SC5`. La cache temporal de ciudad empieza en la coordenada VRAM global Y=330 y ocupa `(156,330)-(255,429)`, equivalente a `(156,74)-(255,173)` de la pagina 1. Los graficos originales de esa zona se moveran a otro lugar.
 
 ### Apertura
 
@@ -163,20 +166,34 @@ La rutina `2400` muestra la imagen de la ciudad en el menu principal.
 - La copia visible se hace con:
 
 ```basic
-COPY (156,156)-(255,255),1 TO (156,104),0
+Z=USR(0)
 ```
 
 La rutina `2460` carga desde disco solo al entrar o cambiar de ciudad.
 
 - Construye `FI$` como `IMGxxx.SC5`.
-- Cambia a pagina activa 1 con `SET PAGE 0,1`.
-- Carga la imagen en el hueco inferior derecho con `COPY FI$ TO (156,156)`.
-- Restaura pagina visible/activa con `SET PAGE 0,0`.
+- Cambia la pagina activa con `SET PAGE 0,1` y carga directamente la imagen en `(156,74)`.
+- Restaura siempre `SET PAGE 0,0`; la imagen no debe aparecer durante mensajes de viaje.
 - Actualiza `IC=CP`.
 
 La rutina `1000` llama a `2460` despues de cargar la ficha y generar vuelos, de forma que la imagen queda preparada antes del menu principal.
 
 El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el error, porque un fallo de disco podria ocurrir mientras se esta usando la pagina 1.
+
+### Fuente 6x6
+
+- La fuente empieza en la coordenada VRAM global `(0,920)`, equivalente a `(0,152)` de la pagina 3.
+- Contiene los caracteres ASCII 32 a 93 en celdas contiguas de 6x6.
+- Hay 42 caracteres en la primera fila del atlas y 20 en la segunda.
+- El codigo ASCII 92 (`\`) representa la letra `ENE` espanola.
+- `FONT6.BIN` se carga en `&HD800`, reservado mediante `CLEAR 8000,&HD7FF`.
+- La rutina `2600` llama a la funcion maquina con `USR` para escribir `T$` en `(TX,TY)` de la pagina 0.
+- La funcion maquina usa comandos HMMM de 6x6 y continua en la linea inferior si el texto supera el borde derecho.
+- Al terminar una cadena, devuelve `TX=0` y `TY` en la siguiente linea de 6 pixeles.
+- Las letras minusculas de los datos se convierten a mayusculas al calcular el glifo.
+- Los caracteres fuera del rango disponible se muestran como espacios.
+- La apertura y el manejador de error usan la fuente ROM porque pueden ejecutarse antes de cargar `VRAM3.SC5`.
+- El menu generico usa el caracter `>` como cursor, sin sprites.
 
 ## Ficheros De Datos
 
@@ -269,7 +286,8 @@ Cada ciudad puede tener una imagen `IMG001.SC5` a `IMG050.SC5`.
 - Formato usado por `COPY "IMGxxx.SC5" TO (X,Y)`.
 - Tamano actual: 100x100 pixeles, 4 bits por pixel, 5004 bytes.
 - Los primeros 4 bytes indican ancho y alto.
-- La imagen se muestra en `(156,104)-(255,203)`.
+- La imagen se muestra completa en `(150,54)-(249,153)` mediante una HMMM de la rutina maquina.
+- No usar `COPY (156,156)-(255,255),1`: BASIC y el motor V9938 recortan en la linea logica Y=211 y solo muestran 56 filas.
 - No se cargan todas las imagenes en RAM ni en VRAM; solo se cachea la ciudad actual.
 
 ### `OPENING.SC5`

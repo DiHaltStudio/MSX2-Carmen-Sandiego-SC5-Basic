@@ -6,12 +6,18 @@ SRC_DIR="${1:-"$ROOT_DIR/src"}"
 DIST_DIR="${2:-"$ROOT_DIR/dist"}"
 DSK_FILE="${3:-"$DIST_DIR/CARMENSANDIEGO_MSX2.dsk"}"
 
-for tool in mcopy mdel mdir; do
+for tool in mcopy mdel mdir sjasm; do
     if ! command -v "$tool" >/dev/null 2>&1; then
         echo "Missing required tool: $tool" >&2
         exit 1
     fi
 done
+
+(
+    cd "$ROOT_DIR"
+    sjasm tools/FONT6.ASM "$SRC_DIR/FONT6.BIN" /dev/null
+    rm -f "$SRC_DIR/FONT6.lst"
+)
 
 if [ ! -d "$SRC_DIR" ]; then
     echo "Source directory not found: $SRC_DIR" >&2
