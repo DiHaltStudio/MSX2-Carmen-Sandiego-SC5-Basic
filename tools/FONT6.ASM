@@ -4,7 +4,11 @@
 ; Entrada USR desde MSX BASIC:
 ;   A  = 3 (tipo cadena)
 ;   DE = descriptor de cadena
-;   cadena = CHR$(X)+CHR$(Y)+texto
+;   texto = CHR$(X)+CHR$(Y)+texto
+;   escena = CHR$(255)+CHR$(1)+CHR$(ID)+CHR$(X)+CHR$(Y)
+;   borrar = CHR$(255)+CHR$(2)+CHR$(X)+CHR$(Y)+CHR$(W)+CHR$(H)
+;   mover  = CHR$(255)+CHR$(3)+CHR$(ID)+CHR$(NX)+CHR$(NY)
+;            +CHR$(OX)+CHR$(OY)+CHR$(W)+CHR$(H)
 ;
 ; La fuente esta en VRAM pagina 3, coordenada local (0,152), y contiene
 ; ASCII 32..93 en celdas 6x6: 42 glifos en la primera fila y 20 en la
@@ -31,13 +35,31 @@ CHECK_STRING:
         ret     nz
         push    de
         pop     ix
-        ld      a,(ix+0)
+        ld      b,(ix+0)
+        ld      l,(ix+1)
+        ld      h,(ix+2)
+        ld      a,b
+        cp      5
+        jr      c,PREPARE_TEXT
+        ld      a,(hl)
+        cp      255
+        jr      nz,PREPARE_TEXT
+        inc     hl
+        ld      a,(hl)
+        cp      1
+        jp      z,DRAW_SCENE_PACKET
+        cp      2
+        jp      z,CLEAR_RECT_PACKET
+        cp      3
+        jp      z,REPLACE_SCENE_PACKET
+        ret
+
+PREPARE_TEXT:
+        ld      a,b
         cp      2
         ret     c
         sub     2
         ld      (REMAIN),a
-        ld      l,(ix+1)
-        ld      h,(ix+2)
         ld      (HEADER),hl
         ld      a,(hl)
         ld      (DEST_X),a
@@ -151,6 +173,155 @@ COPY_CITY:
         ld      (CMD_NY),hl
         ret
 
+DRAW_SCENE_PACKET:
+        inc     hl              ; ID
+        ld      a,(hl)
+        cp      VRAM_SCENE_COUNT
+        ret     nc
+        ld      (SCENE_ID),a
+        inc     hl              ; DX
+        ld      a,(hl)
+        ld      (SCENE_DX),a
+        inc     hl              ; DY
+        ld      a,(hl)
+        ld      (SCENE_DY),a
+        call    LOAD_SCENE_COMMAND
+        call    WAIT_VBLANK
+        call    START_HMMM
+        call    WAIT_VDP
+        jp      RESTORE_TEXT_COMMAND
+
+LOAD_SCENE_COMMAND:
+        ld      a,(SCENE_DX)
+        ld      (CMD_DX),a
+        xor     a
+        ld      (CMD_DX+1),a
+        ld      a,(SCENE_DY)
+        ld      (CMD_DY),a
+        xor     a
+        ld      (CMD_DY+1),a
+        ld      a,(SCENE_ID)
+        ld      l,a
+        ld      h,0
+        add     hl,hl
+        add     hl,hl
+        add     hl,hl           ; ID * 8
+        ld      de,VRAM_SCENE_TABLE
+        add     hl,de
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        inc     hl
+        ld      (CMD_SX),de
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        inc     hl
+        ld      (CMD_SY),de
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        inc     hl
+        ld      (CMD_NX),de
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        ld      (CMD_NY),de
+        ld      a,0D0h          ; HMMM
+        ld      (CMD_COMMAND),a
+        ret
+
+CLEAR_RECT_PACKET:
+        ld      a,b
+        cp      6
+        ret     c
+        inc     hl              ; DX
+        ld      a,(hl)
+        ld      (CMD_DX),a
+        xor     a
+        ld      (CMD_DX+1),a
+        inc     hl              ; DY
+        ld      a,(hl)
+        ld      (CMD_DY),a
+        xor     a
+        ld      (CMD_DY+1),a
+        inc     hl              ; NX
+        ld      a,(hl)
+        ld      (CMD_NX),a
+        xor     a
+        ld      (CMD_NX+1),a
+        inc     hl              ; NY
+        ld      a,(hl)
+        ld      (CMD_NY),a
+        xor     a
+        ld      (CMD_NY+1),a
+        ld      (CMD_COLOR),a   ; negro
+        ld      a,0C0h          ; HMMV
+        ld      (CMD_COMMAND),a
+        call    WAIT_VBLANK
+        call    START_HMMM
+        call    WAIT_VDP
+        jp      RESTORE_TEXT_COMMAND
+
+REPLACE_SCENE_PACKET:
+        ld      a,b
+        cp      9
+        ret     c
+        inc     hl              ; ID del nuevo frame
+        ld      a,(hl)
+        cp      VRAM_SCENE_COUNT
+        ret     nc
+        ld      (SCENE_ID),a
+        inc     hl              ; nuevo DX
+        ld      a,(hl)
+        ld      (SCENE_DX),a
+        inc     hl              ; nuevo DY
+        ld      a,(hl)
+        ld      (SCENE_DY),a
+        inc     hl              ; anterior DX
+        ld      a,(hl)
+        ld      (CMD_DX),a
+        xor     a
+        ld      (CMD_DX+1),a
+        inc     hl              ; anterior DY
+        ld      a,(hl)
+        ld      (CMD_DY),a
+        xor     a
+        ld      (CMD_DY+1),a
+        inc     hl              ; ancho a borrar
+        ld      a,(hl)
+        ld      (CMD_NX),a
+        xor     a
+        ld      (CMD_NX+1),a
+        inc     hl              ; alto a borrar
+        ld      a,(hl)
+        ld      (CMD_NY),a
+        xor     a
+        ld      (CMD_NY+1),a
+        ld      (CMD_COLOR),a   ; negro
+        ld      a,0C0h          ; HMMV
+        ld      (CMD_COMMAND),a
+
+        call    WAIT_VBLANK
+        call    START_HMMM
+        call    WAIT_VDP
+        call    LOAD_SCENE_COMMAND
+        call    START_HMMM
+        call    WAIT_VDP
+
+RESTORE_TEXT_COMMAND:
+        ld      hl,6
+        ld      (CMD_NX),hl
+        ld      (CMD_NY),hl
+        ld      a,0D0h
+        ld      (CMD_COMMAND),a
+        ret
+
+WAIT_VBLANK:
+        ei                      ; la interrupcion periodica del VDP es el VBlank
+        halt
+        ret
+
 START_HMMM:
         call    WAIT_VDP
         di
@@ -189,14 +360,21 @@ CMD_DX: word    0               ; R#36-37 DX, siempre pagina 0
 CMD_DY: word    0               ; R#38-39 DY
 CMD_NX: word    6               ; R#40-41 NX
 CMD_NY: word    6               ; R#42-43 NY
+CMD_COLOR:
         byte    0               ; R#44 color (no usado por HMMM)
         byte    0               ; R#45 argumento, copia IMP
-        byte    0D0h            ; R#46 HMMM
+CMD_COMMAND:
+        byte    0D0h            ; R#46 HMMM/HMMV
 
 TEXT_PTR:       word    0
 HEADER:         word    0
 REMAIN:         byte    0
 DEST_X:         byte    0
 DEST_Y:         byte    0
+SCENE_ID:       byte    0
+SCENE_DX:       byte    0
+SCENE_DY:       byte    0
+
+        include "VRAM_SCENES.INC"
 
 CODE_END:

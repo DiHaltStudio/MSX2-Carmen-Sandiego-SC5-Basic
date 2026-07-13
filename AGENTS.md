@@ -148,8 +148,14 @@ En el menu `VIAJAR`, la ultima opcion debe ser siempre `NO VIAJAR`. Esa opcion v
 - `2400-2499`: imagen de ciudad y cache VRAM.
 - `2500-2599`: apertura.
 - `2600-2699`: texto 6x6 desde la fuente de VRAM pagina 3.
+- `2700-2799`: animaciones de la pantalla inicial y espera por ticks.
+- `2800-2899`: animacion de la primera pista tras un viaje correcto.
 
 Cada rutina llamada por `GOSUB` debe empezar con una linea `REM` simple.
+
+Las animaciones sustituyen cada frame con una sola llamada a codigo maquina:
+esperan el VBlank, borran la posicion anterior con HMMV y dibujan la nueva con
+HMMM. El intervalo `AD` incluye ese VBlank final.
 
 ## Graficos SC5
 
@@ -201,6 +207,22 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - Los caracteres fuera del rango disponible se muestran como espacios.
 - La apertura y el manejador de error usan la fuente ROM porque pueden ejecutarse antes de cargar `VRAM3.SC5`.
 - El menu generico usa el caracter `>` como cursor, sin sprites.
+
+### Escenas De Animacion
+
+- `tools/VRAM_SCENES.INC` contiene 54 rectangulos de origen para futuras copias HMMM.
+- Cada registro usa el orden `SX,SY_GLOBAL,NX,NY`; X y ancho son siempre pares.
+- VRAM1 aporta 24 escenas y VRAM2 aporta 26.
+- De VRAM3 solo se catalogan 4 escenas en Y local 0..44. Desde Y=45 empiezan el mapa y la fuente.
+- `docs/VRAM_SCENES.md` documenta grupos, conversion de paginas y conflictos de memoria.
+- La cache cruza solo margenes negros de `SC_V1_LADRON_VERDE_CORRE_04` y `05`; sus pixeles visibles y los cinco frames `MIMO` quedan intactos.
+- La pantalla inicial mueve `SC_V2_DETECTIVE_MARRON_01..08` de izquierda a derecha en Y=100.
+- Tras una pausa de 90 ticks mueve `SC_V2_POLICIAS_01..05` por la misma trayectoria.
+- Ambos grupos cambian de fotograma cada 3 ticks y avanzan 4 pixeles por cambio.
+- Cada grupo configura su propio valor `AD`; los tiempos de otros grupos se decidiran mas adelante.
+- La rutina maquina dibuja escenas con HMMM y borra el rectangulo anterior en negro con HMMV.
+- Tras un viaje correcto, la primera pista seleccionada reproduce en Y=154 un grupo aleatorio: cabeza fija en X=90 a 4 ticks, carrera verde a 1 tick o mimo verde a 1 tick.
+- `SC_V1_LADRON_VERDE_MIMO_01..05` es un unico grupo formado por los antiguos grupos `PRESO` y `LADRON_VERDE_PARADO`.
 
 ## Ficheros De Datos
 

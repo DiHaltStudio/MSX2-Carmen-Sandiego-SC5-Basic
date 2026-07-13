@@ -6,7 +6,7 @@ cargable mediante `BLOAD`.
 
 ## Memoria
 
-El binario ocupa `&HD800-&HD935`. BASIC reserva esa zona con:
+El binario ocupa `&HD800-&HDC0E`. BASIC reserva esa zona con:
 
 ```basic
 CLEAR 8000,&HD7FF
@@ -45,6 +45,36 @@ Cuando no cabe otro glifo, continua en `X=0,Y=Y+6`. Al volver, los dos primeros
 bytes contienen `X=0` y la Y de la siguiente linea, de modo que llamadas
 consecutivas siguen escribiendo debajo. No se dibuja fuera de las 212 lineas
 visibles.
+
+## Escenas y borrado rapido
+
+Una cadena de control que empieza por 255 permite usar el mismo `USR` para las
+animaciones. Para dibujar una escena catalogada mediante HMMM:
+
+```basic
+U$=CHR$(255)+CHR$(1)+CHR$(ID)+CHR$(X)+CHR$(Y):U$=USR(U$)
+```
+
+Para restaurar rapidamente el fondo negro mediante HMMV:
+
+```basic
+U$=CHR$(255)+CHR$(2)+CHR$(X)+CHR$(Y)+CHR$(W)+CHR$(H):U$=USR(U$)
+```
+
+Para sustituir un frame en movimiento sin dejar una pantalla negra entre dos
+llamadas BASIC:
+
+```basic
+U$=CHR$(255)+CHR$(3)+CHR$(ID)+CHR$(NX)+CHR$(NY)+CHR$(OX)+CHR$(OY)+CHR$(W)+CHR$(H)
+U$=USR(U$)
+```
+
+El comando 1 obtiene `SX`, `SY`, `NX` y `NY` de `VRAM_SCENES.INC`. El comando
+2 rellena el rectangulo indicado con el color 0. El comando 3 espera el VBlank,
+borra en negro el rectangulo anterior `(OX,OY,W,H)` mediante HMMV y copia el
+nuevo frame `ID` en `(NX,NY)` mediante HMMM dentro de la misma llamada Z80.
+Los comandos 1 y 2 tambien esperan el VBlank. Tras cualquiera de ellos se
+restaura el bloque 6x6 y el comando HMMM usados por el texto.
 
 ## Atlas de glifos
 
