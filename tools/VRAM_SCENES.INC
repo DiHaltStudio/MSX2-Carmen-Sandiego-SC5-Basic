@@ -12,7 +12,7 @@
 ; direccion: VRAM_SCENE_TABLE + identificador * VRAM_SCENE_RECORD_SIZE.
 
 VRAM_SCENE_RECORD_SIZE       equ 8
-VRAM_SCENE_COUNT             equ 54
+VRAM_SCENE_COUNT             equ 55
 
 SC_V1_CABEZA_01              equ 0
 SC_V1_CABEZA_02              equ 1
@@ -68,6 +68,7 @@ SC_LADRON_AZUL_08            equ 50
 SC_LADRON_AZUL_09            equ 51
 SC_LADRON_AZUL_10            equ 52
 SC_HACHA_04                  equ 53
+SC_V3_MAPA_MUNDO             equ 54
 
 VRAM_SCENE_TABLE:
         ; VRAM1: cabezas, cuchillo y carrera del ladron verde.
@@ -133,5 +134,8 @@ VRAM_SCENE_TABLE:
         word 38,768,40,45      ; 51 SC_LADRON_AZUL_09
         word 78,768,40,45      ; 52 SC_LADRON_AZUL_10
         word 120,768,44,38     ; 53 SC_HACHA_04
+
+        ; VRAM3: mapa del mundo, Y local 45..151.
+        word 0,813,256,107      ; 54 SC_V3_MAPA_MUNDO
 
 VRAM_SCENE_TABLE_END:

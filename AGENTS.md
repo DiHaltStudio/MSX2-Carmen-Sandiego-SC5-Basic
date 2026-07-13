@@ -150,6 +150,7 @@ En el menu `VIAJAR`, la ultima opcion debe ser siempre `NO VIAJAR`. Esa opcion v
 - `2600-2699`: texto 6x6 desde la fuente de VRAM pagina 3.
 - `2700-2799`: animaciones de la pantalla inicial y espera por ticks.
 - `2800-2899`: animacion de la primera pista tras un viaje correcto.
+- `2900-2999`: mapa, ruta y rotulos de la transicion de viaje.
 
 Cada rutina llamada por `GOSUB` debe empezar con una linea `REM` simple.
 
@@ -199,9 +200,10 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - Contiene los caracteres ASCII 32 a 93 en celdas contiguas de 6x6.
 - Hay 42 caracteres en la primera fila del atlas y 20 en la segunda.
 - El codigo ASCII 92 (`\`) representa la letra `ENE` espanola.
-- `FONT6.BIN` se carga en `&HD800`, reservado mediante `CLEAR 8000,&HD7FF`.
+- `FONT6.BIN` se carga en `&HD800`, reservado mediante `CLEAR 6000,&HD7FF`.
 - La rutina `2600` llama a la funcion maquina con `USR` para escribir `T$` en `(TX,TY)` de la pagina 0.
 - La funcion maquina usa comandos HMMM de 6x6 y continua en la linea inferior si el texto supera el borde derecho.
+- La rutina `2630` usa el atlas verde de Y global 932 y LMMM con TIMP, de modo que el color 0 es transparente.
 - Al terminar una cadena, devuelve `TX=0` y `TY` en la siguiente linea de 6 pixeles.
 - Las letras minusculas de los datos se convierten a mayusculas al calcular el glifo.
 - Los caracteres fuera del rango disponible se muestran como espacios.
@@ -212,10 +214,10 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 
 ### Escenas De Animacion
 
-- `tools/VRAM_SCENES.INC` contiene 54 rectangulos de origen para futuras copias HMMM.
+- `tools/VRAM_SCENES.INC` contiene 55 rectangulos de origen para copias HMMM, incluido el mapa.
 - Cada registro usa el orden `SX,SY_GLOBAL,NX,NY`; X y ancho son siempre pares.
 - VRAM1 aporta 24 escenas y VRAM2 aporta 26.
-- De VRAM3 solo se catalogan 4 escenas en Y local 0..44. Desde Y=45 empiezan el mapa y la fuente.
+- De VRAM3 se catalogan 4 escenas en Y local 0..44 y el mapa 256x107 que empieza en Y local 45.
 - `docs/VRAM_SCENES.md` documenta grupos, conversion de paginas y conflictos de memoria.
 - La cache cruza solo margenes negros de `SC_V1_LADRON_VERDE_CORRE_04` y `05`; sus pixeles visibles y los cinco frames `MIMO` quedan intactos.
 - La pantalla inicial mueve `SC_V2_DETECTIVE_MARRON_01..08` de izquierda a derecha en Y=100.
@@ -240,6 +242,19 @@ CIUDAD_2
 ```
 
 El indice numerico de cada ciudad corresponde a su posicion en este fichero. Actualmente debe haber 50 ciudades y sus ficheros `CITY001.DAT` a `CITY050.DAT`.
+
+### `CITYPOS.DAT`
+
+Contiene una linea por ciudad, en el mismo orden que `CITIES.DAT`:
+
+```text
+NUM_CIUDADES
+NOMBRE,LABEL_X,LABEL_Y,POINT_X,POINT_Y
+```
+
+Las coordenadas son locales al mapa 256x107. `LABEL` controla donde empieza
+el texto y `POINT` el extremo geografico de la linea. La rutina BASIC suma 40
+a las coordenadas Y al dibujarlas en pantalla. Vease `docs/CITYPOS.md`.
 
 ### `CITYxxx.DAT`
 

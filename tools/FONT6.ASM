@@ -9,6 +9,7 @@
 ;   borrar = CHR$(255)+CHR$(2)+CHR$(X)+CHR$(Y)+CHR$(W)+CHR$(H)
 ;   mover  = CHR$(255)+CHR$(3)+CHR$(ID)+CHR$(NX)+CHR$(NY)
 ;            +CHR$(OX)+CHR$(OY)+CHR$(W)+CHR$(H)
+;   verde  = CHR$(255)+CHR$(5)+CHR$(X)+CHR$(Y)+texto
 ;
 ; La fuente esta en VRAM pagina 3, coordenada local (0,152), y contiene
 ; ASCII 32..93 en celdas 6x6: 42 glifos en la primera fila y 20 en la
@@ -52,6 +53,8 @@ CHECK_STRING:
         jp      z,CLEAR_RECT_PACKET
         cp      3
         jp      z,REPLACE_SCENE_PACKET
+        cp      5
+        jp      z,GREEN_TEXT_PACKET
         ret
 
 PREPARE_TEXT:
@@ -59,6 +62,36 @@ PREPARE_TEXT:
         cp      2
         ret     c
         sub     2
+        push    af
+        ld      de,920
+        ld      (FONT_ROW1),de
+        ld      de,926
+        ld      (FONT_ROW2),de
+        ld      a,0D0h          ; HMMM opaco
+        ld      (CMD_COMMAND),a
+        xor     a
+        ld      (CMD_ARGUMENT),a
+        pop     af
+        jr      PREPARE_TEXT_COMMON
+
+GREEN_TEXT_PACKET:
+        ld      a,b
+        cp      5
+        ret     c
+        inc     hl              ; X, despues del comando 5
+        sub     4               ; 255, comando, X, Y
+        push    af
+        ld      de,932
+        ld      (FONT_ROW1),de
+        ld      de,938
+        ld      (FONT_ROW2),de
+        ld      a,098h          ; LMMM con TIMP: color 0 transparente
+        ld      (CMD_COMMAND),a
+        xor     a
+        ld      (CMD_ARGUMENT),a
+        pop     af
+
+PREPARE_TEXT_COMMON:
         ld      (REMAIN),a
         ld      (HEADER),hl
         ld      a,(hl)
@@ -112,10 +145,10 @@ GLYPH_INDEX:
         cp      42
         jr      c,FIRST_ROW
         sub     42
-        ld      hl,926
+        ld      hl,(FONT_ROW2)
         jr      SET_SOURCE
 FIRST_ROW:
-        ld      hl,920
+        ld      hl,(FONT_ROW1)
 SET_SOURCE:
         ld      (CMD_SY),hl
         ld      e,a
@@ -155,6 +188,10 @@ TEXT_DONE:
 
 COPY_CITY:
         ; Cache -> pantalla.
+        ld      a,0D0h          ; la cache siempre usa HMMM opaco
+        ld      (CMD_COMMAND),a
+        xor     a
+        ld      (CMD_ARGUMENT),a
         ld      hl,156
         ld      (CMD_SX),hl
         ld      hl,330           ; pagina 1, Y local 74: 256+74
@@ -362,6 +399,7 @@ CMD_NX: word    6               ; R#40-41 NX
 CMD_NY: word    6               ; R#42-43 NY
 CMD_COLOR:
         byte    0               ; R#44 color (no usado por HMMM)
+CMD_ARGUMENT:
         byte    0               ; R#45 argumento, copia IMP
 CMD_COMMAND:
         byte    0D0h            ; R#46 HMMM/HMMV
@@ -371,6 +409,8 @@ HEADER:         word    0
 REMAIN:         byte    0
 DEST_X:         byte    0
 DEST_Y:         byte    0
+FONT_ROW1:      word    920
+FONT_ROW2:      word    926
 SCENE_ID:       byte    0
 SCENE_DX:       byte    0
 SCENE_DY:       byte    0

@@ -1,7 +1,7 @@
 # Catalogo de escenas en VRAM
 
 Los bancos `VRAM1.SC5`, `VRAM2.SC5` y `VRAM3.SC5` se cargan en las paginas 1,
-2 y 3 de SCREEN 5. El fichero `tools/VRAM_SCENES.INC` cataloga 54 rectangulos
+2 y 3 de SCREEN 5. El fichero `tools/VRAM_SCENES.INC` cataloga 55 rectangulos
 de origen preparados para futuras copias HMMM.
 
 Cada registro contiene:
@@ -50,11 +50,11 @@ Los nombres describen visualmente las secuencias; todavia no fijan su funcion
 argumental ni el orden temporal definitivo. Los destinos tampoco forman parte
 de la tabla y se decidiran cuando se implementen las animaciones.
 
-## Limite de VRAM3
+## Mapa en VRAM3
 
-Solo se cataloga `VRAM3.bmp` entre Y local 0 y 44. A partir de Y local 45
-(`Y global=813`) empiezan el mapa y la fuente, que quedan expresamente fuera de
-la tabla de escenas.
+Las cuatro escenas iniciales de `VRAM3.bmp` ocupan Y local 0..44. El mapa del
+mundo se cataloga aparte como `SC_V3_MAPA_MUNDO`: origen global `(0,813)`,
+tamano 256x107. La fuente permanece en `(0,920)` y no forma parte de la tabla.
 
 ## Cache de ciudad y escenas cercanas
 

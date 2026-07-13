@@ -6,17 +6,19 @@ cargable mediante `BLOAD`.
 
 ## Memoria
 
-El binario ocupa `&HD800-&HDC0E`. BASIC reserva esa zona con:
+El binario ocupa `&HD800-&HDC63`. BASIC reserva esa zona con:
 
 ```basic
-CLEAR 8000,&HD7FF
+CLEAR 6000,&HD7FF
 BLOAD"FONT6.BIN"
 DEFUSR=&HD800
 ```
 
-El limite `&HD7FF` evita que programa, variables y cadenas puedan invadir el
-codigo maquina. La direccion queda ademas separada del limite alto de Disk
-BASIC. El binario no usa memoria fuera de su propio bloque.
+Los 6000 bytes de espacio de cadenas bastan para los nombres y textos cargados
+por el juego y dejan memoria para las estructuras BASIC. El limite `&HD7FF`
+evita que programa, variables y cadenas puedan invadir el codigo maquina. La
+direccion queda ademas separada del limite alto de Disk BASIC. El binario no
+usa memoria fuera de su propio bloque.
 
 ## Llamada
 
@@ -45,6 +47,17 @@ Cuando no cabe otro glifo, continua en `X=0,Y=Y+6`. Al volver, los dos primeros
 bytes contienen `X=0` y la Y de la siguiente linea, de modo que llamadas
 consecutivas siguen escribiendo debajo. No se dibuja fuera de las 212 lineas
 visibles.
+
+La copia verde y transparente usa este paquete:
+
+```basic
+U$=CHR$(255)+CHR$(5)+CHR$(TX)+CHR$(TY)+T$:U$=USR(U$)
+```
+
+El atlas verde empieza en la coordenada global `(0,932)`, equivalente a
+`(0,164)` de la pagina 3. Cada glifo se copia con LMMM y operacion TIMP
+(`R#46=&H98`): los pixeles de origen con color 0 conservan el mapa y los
+pixeles de color 11 forman la letra.
 
 ## Escenas y borrado rapido
 
@@ -88,8 +101,9 @@ python3 tools/bmp_to_bload_sc5.py res/VRAM3.bmp --output-dir res
 cp res/VRAM3.SC5 src/VRAM3.SC5
 ```
 
-El atlas tiene 42 caracteres en la primera fila y 20 en la segunda. Cada celda
-ocupa exactamente 6x6 y puede copiarse contigua a la siguiente.
+Los atlas blanco y verde tienen 42 caracteres en la primera fila y 20 en la
+segunda. Cada celda ocupa exactamente 6x6 y puede copiarse contigua a la
+siguiente. El atlas blanco empieza en Y global 920 y el verde en Y global 932.
 
 ## Menus
 
