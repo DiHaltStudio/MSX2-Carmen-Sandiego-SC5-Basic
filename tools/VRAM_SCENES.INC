@@ -71,29 +71,29 @@ SC_HACHA_04                  equ 53
 
 VRAM_SCENE_TABLE:
         ; VRAM1: cabezas, cuchillo y carrera del ladron verde.
-        word 0,256,44,43       ; 00 SC_V1_CABEZA_01
-        word 44,256,44,43      ; 01 SC_V1_CABEZA_02
-        word 88,256,44,43      ; 02 SC_V1_CABEZA_03
-        word 132,256,44,43     ; 03 SC_V1_CABEZA_04
+        word 0,256,42,32       ; 00 SC_V1_CABEZA_01
+        word 42,256,42,32      ; 01 SC_V1_CABEZA_02
+        word 84,256,42,32      ; 02 SC_V1_CABEZA_03
+        word 126,256,42,32     ; 03 SC_V1_CABEZA_04
         word 188,256,68,14     ; 04 SC_V1_CUCHILLO_01
-        word 0,299,44,41       ; 05 SC_V1_LADRON_VERDE_CORRE_01
-        word 44,299,44,41      ; 06 SC_V1_LADRON_VERDE_CORRE_02
-        word 88,299,44,41      ; 07 SC_V1_LADRON_VERDE_CORRE_03
-        word 132,299,44,41     ; 08 SC_V1_LADRON_VERDE_CORRE_04
-        word 176,288,46,52     ; 09 SC_V1_LADRON_VERDE_CORRE_05 (escalonado)
-        word 0,340,44,32       ; 10 SC_V1_LADRON_VERDE_CORRE_06
-        word 44,340,44,32      ; 11 SC_V1_LADRON_VERDE_CORRE_07
-        word 88,340,46,32      ; 12 SC_V1_LADRON_VERDE_CORRE_08
+        word 0,288,46,41       ; 05 SC_V1_LADRON_VERDE_CORRE_01
+        word 46,288,46,41      ; 06 SC_V1_LADRON_VERDE_CORRE_02
+        word 92,288,46,41      ; 07 SC_V1_LADRON_VERDE_CORRE_03
+        word 92+46,288,46,41     ; 08 SC_V1_LADRON_VERDE_CORRE_04
+        word 92+46+46,288,46,41     ; 09 SC_V1_LADRON_VERDE_CORRE_05
+        word 0,329,46,41       ; 10 SC_V1_LADRON_VERDE_CORRE_06
+        word 46,329,46,41      ; 11 SC_V1_LADRON_VERDE_CORRE_07
+        word 92,329,46,41      ; 12 SC_V1_LADRON_VERDE_CORRE_08
 
         ; VRAM1: armas y mimo del ladron verde.
         word 2,372,40,43       ; 13 SC_V1_HACHA_01
         word 44,372,46,43      ; 14 SC_V1_HACHA_02
         word 90,372,46,43      ; 15 SC_V1_HACHA_03
-        word 0,415,44,42       ; 16 SC_V1_LADRON_VERDE_MIMO_01
-        word 46,415,44,42      ; 17 SC_V1_LADRON_VERDE_MIMO_02
-        word 92,415,44,42      ; 18 SC_V1_LADRON_VERDE_MIMO_03
-        word 0,460,44,51       ; 19 SC_V1_LADRON_VERDE_MIMO_04
-        word 46,460,46,51      ; 20 SC_V1_LADRON_VERDE_MIMO_05
+        word 0,415,46,42       ; 16 SC_V1_LADRON_VERDE_MIMO_01
+        word 46,415,46,42      ; 17 SC_V1_LADRON_VERDE_MIMO_02
+        word 92,415,46,42      ; 18 SC_V1_LADRON_VERDE_MIMO_03
+        word 0,457,46,42       ; 19 SC_V1_LADRON_VERDE_MIMO_04
+        word 46,457,46,42      ; 20 SC_V1_LADRON_VERDE_MIMO_05
         word 94,460,52,30      ; 21 SC_V1_PISTOLA_01
         word 142,460,38,30     ; 22 SC_V1_PISTOLA_02
         word 94,490,46,22      ; 23 SC_V1_PISTOLA_03
@@ -114,7 +114,7 @@ VRAM_SCENE_TABLE:
         ; VRAM2: detective marron (8 fotogramas).
         word 50,611,52,49      ; 35 SC_V2_DETECTIVE_MARRON_01
         word 100,611,52,49     ; 36 SC_V2_DETECTIVE_MARRON_02
-        word 152,611,52,49     ; 37 SC_V2_DETECTIVE_MARRON_03
+        word 152,611,50,49     ; 37 SC_V2_DETECTIVE_MARRON_03
         word 202,611,52,49     ; 38 SC_V2_DETECTIVE_MARRON_04
         word 0,660,50,50       ; 39 SC_V2_DETECTIVE_MARRON_05
         word 50,660,50,50      ; 40 SC_V2_DETECTIVE_MARRON_06

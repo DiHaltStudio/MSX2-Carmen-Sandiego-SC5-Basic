@@ -66,6 +66,7 @@ Requisitos del sistema:
 - Juego principal escrito en MSX BASIC 2.0 y almacenado en
   [`src/CARMEN5.BAS`](src/CARMEN5.BAS).
 - Graficos de 16 colores en `SCREEN 5`.
+- Sprites hardware deshabilitados; personajes y animaciones usan copias HMMM en VRAM.
 - Tres bancos graficos precargados en las paginas 1, 2 y 3 de VRAM.
 - Fuente propia de 6x6 con caracteres ASCII 32 a 93 y `\` como ENE espanola.
 - Rutina Z80 ensamblada con Sjasm clasico para dibujar texto mediante comandos

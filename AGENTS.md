@@ -207,6 +207,8 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - Los caracteres fuera del rango disponible se muestran como espacios.
 - La apertura y el manejador de error usan la fuente ROM porque pueden ejecutarse antes de cargar `VRAM3.SC5`.
 - El menu generico usa el caracter `>` como cursor, sin sprites.
+- Los sprites hardware permanecen deshabilitados mediante el bit SPD de R#8 (`VDP(9) OR 2`).
+- No usar `SPRITE$`, `PUT SPRITE`, `ON SPRITE` ni cargar patrones o atributos de sprites.
 
 ### Escenas De Animacion
 
@@ -221,7 +223,7 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - Ambos grupos cambian de fotograma cada 3 ticks y avanzan 4 pixeles por cambio.
 - Cada grupo configura su propio valor `AD`; los tiempos de otros grupos se decidiran mas adelante.
 - La rutina maquina dibuja escenas con HMMM y borra el rectangulo anterior en negro con HMMV.
-- Tras un viaje correcto, la primera pista seleccionada reproduce en Y=154 un grupo aleatorio: cabeza fija en X=90 a 4 ticks, carrera verde a 1 tick o mimo verde a 1 tick.
+- Tras un viaje correcto, la primera pista seleccionada reproduce en Y=154 un grupo aleatorio: cabeza fija en X=90, dos ciclos y 5 ticks; carrera verde de derecha a izquierda a 1 tick; o mimo verde de izquierda a derecha a 1 tick.
 - `SC_V1_LADRON_VERDE_MIMO_01..05` es un unico grupo formado por los antiguos grupos `PRESO` y `LADRON_VERDE_PARADO`.
 
 ## Ficheros De Datos

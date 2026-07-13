@@ -104,9 +104,10 @@ confirmacion adicional. La primera opcion valida elegida en `INVESTIGAR`
 reproduce aleatoriamente uno de estos grupos en Y=154 y despues muestra la
 pista normalmente:
 
-- `SC_V1_CABEZA_01..04`: fija en X=90, con 4 ticks por frame.
-- `SC_V1_LADRON_VERDE_CORRE_01..08`: recorre la pantalla de izquierda a
-  derecha, con 1 tick por frame.
+- `SC_V1_CABEZA_01..04`: fija en X=90, repite dos veces la secuencia y usa
+  5 ticks por frame.
+- `SC_V1_LADRON_VERDE_CORRE_01..08`: recorre la pantalla de derecha a
+  izquierda, con 1 tick por frame.
 - `SC_V1_LADRON_VERDE_MIMO_01..05`: recorre la pantalla de izquierda a
   derecha, con 1 tick por frame.
 
