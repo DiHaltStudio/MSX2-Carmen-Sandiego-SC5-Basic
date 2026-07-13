@@ -17,7 +17,8 @@ Crear una version simplificada tipo "Where in the World is Carmen Sandiego" para
 - Los repintados del menu principal copian la imagen de ciudad desde VRAM pagina 1 a VRAM pagina 0, sin volver a leer disco.
 - `OPENING.SC5` contiene la pantalla de apertura y se muestra con `BLOAD"OPENING.SC5",S`.
 - Al cerrar la apertura se cargan `VRAM1.SC5`, `VRAM2.SC5` y `VRAM3.SC5` en las paginas 1, 2 y 3.
-- Los tres bancos contienen la paleta del juego, que se activa con `COLOR=RESTORE`.
+- Los tres bancos comparten la paleta del juego, pero conservan todos sus pixeles.
+- `GAMEPAL.SC5` contiene aparte los 32 bytes de paleta y se carga en la pagina 0 antes de `COLOR=RESTORE`.
 - La ruta de cada caso se genera al azar sin repetir ciudad.
 - Las opciones de vuelo se generan al azar desde las ciudades de la BD, sin repetir opcion ni incluir la ciudad actual.
 - Si el jugador se sale de la ruta correcta, una de las opciones de vuelo permite volver a la ciudad de la pista activa.
@@ -161,6 +162,8 @@ HMMM. El intervalo `AD` incluye ese VBlank final.
 ## Graficos SC5
 
 El juego trabaja en `SCREEN 5`. La pagina visible es la pagina 0. Las paginas 1, 2 y 3 contienen los bancos graficos `VRAM1.SC5` a `VRAM3.SC5`. La cache temporal de ciudad empieza en la coordenada VRAM global Y=330 y ocupa `(156,330)-(255,429)`, equivalente a `(156,74)-(255,173)` de la pagina 1. Los graficos originales de esa zona se moveran a otro lugar.
+
+La tabla que usa `COLOR=RESTORE` empieza en `&H7680`, equivalente a Y local 237. No se inserta en `VRAM1.SC5`, `VRAM2.SC5` ni `VRAM3.SC5`, porque pisaria 64 pixeles de los bancos. La utilidad genera `GAMEPAL.SC5`, un bloque de 32 bytes que BASIC carga en la pagina 0, fuera de las 212 lineas visibles, antes de restaurar la paleta.
 
 ### Apertura
 

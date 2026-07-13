@@ -98,8 +98,12 @@ ENE espanola y escribe el atlas en `(0,152)` de `res/VRAM3.bmp`:
 ```bash
 python3 tools/insert_round_font.py res/round_6x6.png res/VRAM3.bmp
 python3 tools/bmp_to_bload_sc5.py res/VRAM3.bmp --output-dir res
-cp res/VRAM3.SC5 src/VRAM3.SC5
+cp res/VRAM3.SC5 res/GAMEPAL.SC5 src/
 ```
+
+`GAMEPAL.SC5` contiene solamente los 32 bytes que `COLOR=RESTORE` espera en
+`&H7680`. Se carga en la pagina 0. Los bancos VRAM conservan los pixeles
+originales de Y=237 en lugar de sustituirlos por la tabla de paleta.
 
 Los atlas blanco y verde tienen 42 caracteres en la primera fila y 20 en la
 segunda. Cada celda ocupa exactamente 6x6 y puede copiarse contigua a la

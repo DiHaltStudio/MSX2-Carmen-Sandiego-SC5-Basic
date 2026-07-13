@@ -15,6 +15,7 @@ HEIGHT = 256
 VRAM_SIZE = WIDTH * HEIGHT // 2
 PALETTE_ADDRESS = 0x7680
 PALETTE_ENTRIES = 16
+PALETTE_FILENAME = "GAMEPAL.SC5"
 
 
 def arguments() -> argparse.Namespace:
@@ -69,15 +70,16 @@ def encode_palette(palette: tuple[tuple[int, int, int], ...]) -> bytes:
     return bytes(encoded)
 
 
-def encode_vram(pixels: bytes, palette: tuple[tuple[int, int, int], ...]) -> bytes:
+def encode_vram(pixels: bytes) -> bytes:
     vram = bytearray(VRAM_SIZE)
     for source in range(0, len(pixels), 2):
         vram[source // 2] = (pixels[source] << 4) | pixels[source + 1]
-
-    # MSX2 BASIC reserves this VRAM range as the palette storage table.
-    palette_bytes = encode_palette(palette)
-    vram[PALETTE_ADDRESS:PALETTE_ADDRESS + len(palette_bytes)] = palette_bytes
     return bytes(vram)
+
+
+def bload_data(data: bytes, start: int) -> bytes:
+    header = struct.pack("<BHHH", 0xFE, start, start + len(data) - 1, 0x0000)
+    return header + data
 
 
 def main() -> int:
@@ -89,11 +91,19 @@ def main() -> int:
             raise ValueError(f"{path}: palette differs from {loaded[0][0]}")
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    header = struct.pack("<BHHH", 0xFE, 0x0000, 0x7FFF, 0x0000)
-    for source, pixels, palette in loaded:
+    for source, pixels, _palette in loaded:
         destination = args.output_dir / f"{source.stem}.SC5"
-        destination.write_bytes(header + encode_vram(pixels, palette))
+        destination.write_bytes(bload_data(encode_vram(pixels), 0x0000))
         print(f"{source} -> {destination} ({destination.stat().st_size} bytes)")
+
+    palette_destination = args.output_dir / PALETTE_FILENAME
+    palette_destination.write_bytes(
+        bload_data(encode_palette(reference_palette), PALETTE_ADDRESS)
+    )
+    print(
+        f"Shared palette -> {palette_destination} "
+        f"({palette_destination.stat().st_size} bytes)"
+    )
 
     print("Shared palette (BMP RGB8 -> V9938 RGB3):")
     for index, rgb in enumerate(reference_palette):
