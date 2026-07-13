@@ -230,6 +230,8 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - La rutina maquina dibuja escenas con HMMM y borra el rectangulo anterior en negro con HMMV.
 - Tras un viaje correcto, la primera pista seleccionada reproduce en Y=154 un grupo aleatorio: cabeza fija en X=90, dos ciclos y 5 ticks; carrera verde de derecha a izquierda a 1 tick; o mimo verde de izquierda a derecha a 1 tick.
 - `SC_V1_LADRON_VERDE_MIMO_01..05` es un unico grupo formado por los antiguos grupos `PRESO` y `LADRON_VERDE_PARADO`.
+- En la ciudad final, cada pista reproduce aleatoriamente en Y=154: hacha de izquierda a derecha a 4 ticks y 12 pixeles por paso; pistola fija en X=90, dos ciclos y 10 ticks; o cuchillo de derecha a izquierda con un unico frame y 12 pixeles por VBlank.
+- Intentar viajar desde la ciudad final reproduce el mismo sorteo de animaciones antes de indicar que se debe usar `ARRESTAR`, sin consumir horas.
 
 ## Ficheros De Datos
 

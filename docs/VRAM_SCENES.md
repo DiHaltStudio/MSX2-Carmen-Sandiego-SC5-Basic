@@ -38,7 +38,7 @@ local. Su origen HMMM es `(0,768)`.
 | Cabeza del ladron verde | `SC_V1_CABEZA_01..04` | 4 | VRAM1 |
 | Cuchillo | `SC_V1_CUCHILLO_01` | 1 | VRAM1 |
 | Ladron verde corriendo | `SC_V1_LADRON_VERDE_CORRE_01..08` | 8 | VRAM1 |
-| Hacha | `SC_V1_HACHA_01..03`, `SC_HACHA_04` | 4 | VRAM1/VRAM3 |
+| Hacha | `SC_V1_HACHA_01..04` | 4 | VRAM1/VRAM3 |
 | Ladron verde mimo | `SC_V1_LADRON_VERDE_MIMO_01..05` | 5 | VRAM1 |
 | Pistola | `SC_V1_PISTOLA_01..03` | 3 | VRAM1 |
 | Captura | `SC_V2_CAPTURA_01..06` | 6 | VRAM2 |
@@ -113,3 +113,21 @@ pista normalmente:
 
 La animacion solo se consume al seleccionar una pista valida. Viajar de nuevo
 antes de investigar sustituye el estado de llegada anterior.
+
+## Animaciones de pista en la ciudad final
+
+Cuando el ladron ya esta en la ciudad actual, cada opcion solicitada en
+`INVESTIGAR` reproduce aleatoriamente uno de estos grupos en Y=154 antes de
+mostrar la pista:
+
+- `SC_V1_HACHA_01..04`: de izquierda a derecha, con 4 ticks por frame y un
+  avance de 12 pixeles por paso.
+- `SC_V1_PISTOLA_01..03`: fija en X=90, dos ciclos y 10 ticks por frame.
+- `SC_V1_CUCHILLO_01`: de derecha a izquierda, con un unico frame y un avance
+  de 12 pixeles por VBlank.
+
+La cuarta imagen del hacha esta en VRAM3 y conserva el identificador 53. La
+rutina BASIC la intercala despues de los identificadores 13, 14 y 15.
+Intentar usar `VIAJAR` cuando el ladron ya esta en la ciudad reproduce el
+mismo sorteo antes de indicar al jugador que debe usar `ARRESTAR`; no consume
+horas.

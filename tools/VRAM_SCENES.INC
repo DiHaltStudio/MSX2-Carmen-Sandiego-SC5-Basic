@@ -67,7 +67,7 @@ SC_LADRON_AZUL_07            equ 49
 SC_LADRON_AZUL_08            equ 50
 SC_LADRON_AZUL_09            equ 51
 SC_LADRON_AZUL_10            equ 52
-SC_HACHA_04                  equ 53
+SC_V1_HACHA_04               equ 53
 SC_V3_MAPA_MUNDO             equ 54
 
 VRAM_SCENE_TABLE:
@@ -76,7 +76,7 @@ VRAM_SCENE_TABLE:
         word 42,256,42,32      ; 01 SC_V1_CABEZA_02
         word 84,256,42,32      ; 02 SC_V1_CABEZA_03
         word 126,256,42,32     ; 03 SC_V1_CABEZA_04
-        word 188,256,68,14     ; 04 SC_V1_CUCHILLO_01
+        word 188,256,60,16     ; 04 SC_V1_CUCHILLO_01
         word 0,288,46,41       ; 05 SC_V1_LADRON_VERDE_CORRE_01
         word 46,288,46,41      ; 06 SC_V1_LADRON_VERDE_CORRE_02
         word 92,288,46,41      ; 07 SC_V1_LADRON_VERDE_CORRE_03
@@ -87,17 +87,17 @@ VRAM_SCENE_TABLE:
         word 92,329,46,41      ; 12 SC_V1_LADRON_VERDE_CORRE_08
 
         ; VRAM1: armas y mimo del ladron verde.
-        word 2,372,40,43       ; 13 SC_V1_HACHA_01
-        word 44,372,46,43      ; 14 SC_V1_HACHA_02
-        word 90,372,46,43      ; 15 SC_V1_HACHA_03
+        word 0,371,44,44       ; 13 SC_V1_HACHA_01
+        word 45,371,44,44      ; 14 SC_V1_HACHA_02
+        word 90,371,44,44      ; 15 SC_V1_HACHA_03
         word 0,415,46,42       ; 16 SC_V1_LADRON_VERDE_MIMO_01
         word 46,415,46,42      ; 17 SC_V1_LADRON_VERDE_MIMO_02
         word 92,415,46,42      ; 18 SC_V1_LADRON_VERDE_MIMO_03
         word 0,457,46,42       ; 19 SC_V1_LADRON_VERDE_MIMO_04
         word 46,457,46,42      ; 20 SC_V1_LADRON_VERDE_MIMO_05
-        word 94,460,52,30      ; 21 SC_V1_PISTOLA_01
-        word 142,460,38,30     ; 22 SC_V1_PISTOLA_02
-        word 94,490,46,22      ; 23 SC_V1_PISTOLA_03
+        word 94,457,52,29      ; 21 SC_V1_PISTOLA_01
+        word 94,484,52,29      ; 22 SC_V1_PISTOLA_02
+        word 146,460,52,29     ; 23 SC_V1_PISTOLA_03
 
         ; VRAM2: captura (6 fotogramas) y grupo de policias (5).
         word 0,512,48,49       ; 24 SC_V2_CAPTURA_01
@@ -133,7 +133,7 @@ VRAM_SCENE_TABLE:
         word 0,768,40,45       ; 50 SC_LADRON_AZUL_08
         word 38,768,40,45      ; 51 SC_LADRON_AZUL_09
         word 78,768,40,45      ; 52 SC_LADRON_AZUL_10
-        word 120,768,44,38     ; 53 SC_HACHA_04
+        word 120,768,44,44     ; 53 SC_V1_HACHA_04
 
         ; VRAM3: mapa del mundo, Y local 45..151.
         word 0,813,256,107      ; 54 SC_V3_MAPA_MUNDO
