@@ -9,12 +9,12 @@ cargable mediante `BLOAD`.
 El binario ocupa `&HD800-&HDC63`. BASIC reserva esa zona con:
 
 ```basic
-CLEAR 6000,&HD7FF
+CLEAR 5000,&HD7FF
 BLOAD"FONT6.BIN"
 DEFUSR=&HD800
 ```
 
-Los 6000 bytes de espacio de cadenas bastan para los nombres y textos cargados
+Los 5000 bytes de espacio de cadenas bastan para los nombres y textos cargados
 por el juego y dejan memoria para las estructuras BASIC. El limite `&HD7FF`
 evita que programa, variables y cadenas puedan invadir el codigo maquina. La
 direccion queda ademas separada del limite alto de Disk BASIC. El binario no
@@ -48,17 +48,16 @@ bytes contienen `X=0` y la Y de la siguiente linea, de modo que llamadas
 consecutivas siguen escribiendo debajo. No se dibuja fuera de las 212 lineas
 visibles.
 
-La copia verde y transparente usa este paquete:
+La copia verde opaca usa este paquete:
 
 ```basic
 U$=CHR$(255)+CHR$(5)+CHR$(TX)+CHR$(TY)+T$:U$=USR(U$)
 ```
 
 El atlas verde empieza en la coordenada global `(0,932)`, equivalente a
-`(0,164)` de la pagina 3. Como prueba temporal para los nombres de destino del
-mapa, cada glifo se copia con HMMM opaco (`R#46=&HD0`). Por tanto, el color 0
-del atlas tambien se copia y sustituye los pixeles del mapa situados debajo de
-cada celda 6x6.
+`(0,164)` de la pagina 3. Los nombres de destino del mapa se copian con HMMM
+opaco (`R#46=&HD0`). Por tanto, el color 0 del atlas tambien se copia y
+sustituye los pixeles del mapa situados debajo de cada celda 6x6.
 
 ## Escenas y borrado rapido
 
@@ -98,13 +97,15 @@ ENE espanola y escribe el atlas en `(0,152)` de `res/VRAM3.bmp`:
 
 ```bash
 python3 tools/insert_round_font.py res/round_6x6.png res/VRAM3.bmp
-python3 tools/bmp_to_bload_sc5.py res/VRAM3.bmp --output-dir res
-cp res/VRAM3.SC5 res/GAMEPAL.SC5 src/
+python3 tools/bmp_to_bload_sc5.py \
+  res/VRAM1.bmp res/VRAM2.bmp res/VRAM3.bmp \
+  --output-dir src
 ```
 
 `GAMEPAL.SC5` contiene solamente los 32 bytes que `COLOR=RESTORE` espera en
 `&H7680`. Se carga en la pagina 0. Los bancos VRAM conservan los pixeles
 originales de Y=237 en lugar de sustituirlos por la tabla de paleta.
+La disposicion completa esta documentada en `docs/PALETTE.md`.
 
 Los atlas blanco y verde tienen 42 caracteres en la primera fila y 20 en la
 segunda. Cada celda ocupa exactamente 6x6 y puede copiarse contigua a la
@@ -112,7 +113,7 @@ siguiente. El atlas blanco empieza en Y global 920 y el verde en Y global 932.
 
 ## Menus
 
-La rutina BASIC `2300` dibuja las opciones una sola vez. Al mover el selector
+La rutina BASIC `3220` dibuja las opciones una sola vez. Al mover el selector
 solo borra el caracter `>` anterior y dibuja el nuevo, evitando repintados y
 accesos innecesarios al motor de comandos. El menu principal limpia en negro
 solo su zona izquierda para no borrar la miniimagen de ciudad.
@@ -147,7 +148,8 @@ aparece durante mensajes de transicion como `HAS VIAJADO A`.
 `release.sh` ejecuta:
 
 ```bash
-sjasm tools/FONT6.ASM src/FONT6.BIN /dev/null
+sjasm tools/FONT6.ASM src/FONT6.BIN
+rm -f src/FONT6.lst
 ```
 
 Se requiere Sjasm clasico; no se usa sintaxis especifica de SjasmPlus.

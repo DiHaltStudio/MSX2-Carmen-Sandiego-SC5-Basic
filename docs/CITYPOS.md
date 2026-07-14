@@ -28,6 +28,14 @@ las tres opciones visibles.
 
 Durante la transicion `HAS VIAJADO A`, el juego muestra el nombre de la ciudad
 de origen y los nombres de las tres opciones que estaban disponibles. La linea
-de color 7 une el punto de origen con la opcion elegida. El origen usa la
-fuente blanca opaca; las tres opciones usan la fuente verde mediante LMMM con
-color 0 transparente.
+de color 0 une el punto de origen con la opcion elegida. El origen usa la
+fuente blanca opaca; las tres opciones usan el segundo atlas, de color verde,
+mediante HMMM opaco. Cada celda 6x6 copia tambien su fondo de color 0 sobre el
+mapa.
+
+Las rutinas implicadas en `src/CARMEN5.BAS` son:
+
+- `4190`: copia el mapa, lee las coordenadas y dibuja la linea.
+- `4340`: selecciona la ciudad y su posicion de rotulo.
+- `3660`: escribe el origen con la fuente blanca.
+- `3690`: escribe los destinos con la fuente verde y HMMM.

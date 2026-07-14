@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Build 100x100 SCREEN 5 city images with the shared game palette."""
+
 import csv
 import argparse
 import json
@@ -19,6 +21,7 @@ GAME_DIR = ROOT / "src"
 OUT_DIR = GAME_DIR
 SRC_DIR = ROOT / "image_src"
 CREDITS = ROOT / "IMG_CREDITS.CSV"
+GAME_PALETTE_FILE = ROOT / "res" / "VRAM1.bmp"
 CREDIT_FIELDS = ["index", "city", "wikidata", "source_title", "label", "commons_file", "license", "author", "page"]
 
 WIKI_TITLES = [
@@ -127,26 +130,6 @@ SOURCE_TITLES = [
     "Andes",
 ]
 
-# Default MSX palette, RGB approximations. Keep index 4 blue for the screen bg.
-MSX_PALETTE = [
-    (0, 0, 0),
-    (0, 0, 0),
-    (33, 200, 66),
-    (94, 220, 120),
-    (84, 85, 237),
-    (125, 118, 252),
-    (212, 82, 77),
-    (66, 235, 245),
-    (252, 85, 84),
-    (255, 121, 120),
-    (212, 193, 84),
-    (230, 206, 128),
-    (33, 176, 59),
-    (201, 91, 186),
-    (204, 204, 204),
-    (255, 255, 255),
-]
-
 DITHER_MODES = {
     "none": Image.Dither.NONE,
     "floyd": Image.Dither.FLOYDSTEINBERG,
@@ -250,12 +233,23 @@ def commons_info(filename):
     }
 
 
-def palette_image():
+def load_palette(path):
+    with Image.open(path) as image:
+        if image.mode != "P":
+            raise ValueError(f"Palette source must be indexed: {path}")
+        raw = image.getpalette()
+    if raw is None or len(raw) < 16 * 3:
+        raise ValueError(f"Palette source has fewer than 16 colours: {path}")
+    return [tuple(raw[index:index + 3]) for index in range(0, 16 * 3, 3)]
+
+
+def palette_image(palette):
     pal = Image.new("P", (1, 1))
     flat = []
-    for rgb in MSX_PALETTE:
-        flat.extend(rgb)
-    flat.extend([0, 0, 0] * (256 - len(MSX_PALETTE)))
+    # Repeat the 16 entries so any index selected by Pillow maps safely with
+    # index & 15 to the same game colour.
+    for index in range(256):
+        flat.extend(palette[index & 15])
     pal.putpalette(flat)
     return pal
 
@@ -267,11 +261,11 @@ def existing_source_file(source_dir, idx):
     return matches[0]
 
 
-def write_sc5_copy_file(src, dst, dither):
+def write_sc5_copy_file(src, dst, dither, palette):
     img = Image.open(src).convert("RGB")
     img = ImageOps.fit(img, (100, 100), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
-    img = img.quantize(palette=palette_image(), dither=dither)
-    pix = list(img.getdata())
+    img = img.quantize(palette=palette_image(palette), dither=dither)
+    pix = [index & 15 for index in img.getdata()]
     data = bytearray(struct.pack("<HH", 100, 100))
     for y in range(100):
         row = pix[y * 100 : (y + 1) * 100]
@@ -291,17 +285,39 @@ def clean_html(value):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--limit", type=int, default=len(WIKI_TITLES))
-    parser.add_argument("--start", type=int, default=1)
-    parser.add_argument("--source-dir", type=Path, default=SRC_DIR)
-    parser.add_argument("--credits", type=Path, default=CREDITS)
-    parser.add_argument("--force-download", action="store_true")
-    parser.add_argument("--force-sc5", action="store_true")
-    parser.add_argument("--local-only", action="store_true")
-    parser.add_argument("--dither", choices=sorted(DITHER_MODES), default="none")
-    parser.add_argument("--sleep", type=float, default=0.0)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--limit", type=int, default=len(WIKI_TITLES),
+        help="last city index to process (default: 50)",
+    )
+    parser.add_argument("--start", type=int, default=1, help="first city index")
+    parser.add_argument(
+        "--source-dir", type=Path, default=SRC_DIR,
+        help="directory containing IMG001... source photographs",
+    )
+    parser.add_argument("--credits", type=Path, default=CREDITS, help="credits CSV")
+    parser.add_argument(
+        "--palette", type=Path, default=GAME_PALETTE_FILE,
+        help="indexed image providing palette entries 0..15",
+    )
+    parser.add_argument("--force-download", action="store_true", help="redownload sources")
+    parser.add_argument("--force-sc5", action="store_true", help="overwrite existing SC5 files")
+    parser.add_argument(
+        "--local-only", action="store_true",
+        help="never use the network; read every source from --source-dir",
+    )
+    parser.add_argument(
+        "--dither", choices=sorted(DITHER_MODES), default="none",
+        help="palette dithering mode (default: none)",
+    )
+    parser.add_argument("--sleep", type=float, default=0.0, help="delay between online requests")
     args = parser.parse_args()
+    palette = load_palette(args.palette)
+    print(
+        f"Palette: {args.palette} | dither: {args.dither} | "
+        f"sources: {args.source_dir}",
+        flush=True,
+    )
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     args.source_dir.mkdir(parents=True, exist_ok=True)
@@ -327,7 +343,7 @@ def main():
             src = existing_source_file(args.source_dir, idx)
             if not (args.force_sc5 or not out.exists()):
                 continue
-            write_sc5_copy_file(src, out, DITHER_MODES[args.dither])
+            write_sc5_copy_file(src, out, DITHER_MODES[args.dither], palette)
             continue
         if row.get("commons_file"):
             qid = row.get("wikidata", "")
@@ -339,7 +355,7 @@ def main():
         src = args.source_dir / f"IMG{idx:03d}{Path(urllib.parse.urlparse(info['thumburl']).path).suffix or '.jpg'}"
         download(info["thumburl"], src, args.force_download)
         if args.force_sc5 or not out.exists():
-            write_sc5_copy_file(src, out, DITHER_MODES[args.dither])
+            write_sc5_copy_file(src, out, DITHER_MODES[args.dither], palette)
         rows_by_index[f"{idx:03d}"] = {
             "index": f"{idx:03d}",
             "city": game_name,

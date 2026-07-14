@@ -14,6 +14,12 @@ completar la partida hay que resolver cinco casos.
 > Proyecto homenaje sin afiliacion con los propietarios de la franquicia
 > Carmen Sandiego.
 
+## Capturas
+
+| Introduccion y animaciones | Mapa de viaje | Ciudad y menu principal |
+|---|---|---|
+| ![Introduccion del juego](res/screenshot0.png) | ![Mapa con origen, destinos y ruta](res/screenshot1.png) | ![Pantalla de ciudad y menu principal](res/screenshot2.png) |
+
 ## Como jugar
 
 Cada caso comienza en una ciudad elegida al azar. Desde la pantalla principal
@@ -68,17 +74,34 @@ Requisitos del sistema:
 - Graficos de 16 colores en `SCREEN 5`.
 - Sprites hardware deshabilitados; personajes y animaciones usan copias HMMM en VRAM.
 - Tres bancos graficos precargados en las paginas 1, 2 y 3 de VRAM.
+- Paleta compartida cargada desde `GAMEPAL.SC5`, separada de los bancos para
+  no sustituir sus pixeles de Y=237.
 - Fuente propia de 6x6 con caracteres ASCII 32 a 93 y `\` como ENE espanola.
 - Rutina Z80 ensamblada con Sjasm clasico para dibujar texto mediante comandos
   HMMM del V9938.
-- Miniimagenes de ciudad de 100x100, cargadas una sola vez y cacheadas en VRAM.
+- El mapa usa fuente blanca para el origen, una segunda fuente verde HMMM
+  opaca para los destinos y una linea de color 0 para la ruta elegida.
+- Miniimagenes de ciudad de 100x100, cuantizadas con la paleta de 16 colores
+  del juego sin tramado, cargadas una sola vez y cacheadas en VRAM.
+- Animaciones sincronizadas con VBlank para pistas, ciudad final, arrestos,
+  capturas y derrotas, sin sprites hardware.
+- Musica de apertura y efectos de captura, derrota y animacion mediante el
+  comando `PLAY` y el PSG del MSX.
 - 50 ciudades y 15 sospechosos.
 - Fichas, atributos y ciudades almacenados en ficheros `.DAT` externos para no
   ocupar innecesariamente la RAM de BASIC.
 - Rutas, destinos y sospechoso generados al azar en cada caso.
 
-La implementacion de la fuente, su protocolo `USR` y el mapa de memoria estan
-documentados en [`docs/FONT6.md`](docs/FONT6.md).
+Documentacion tecnica:
+
+- [Estructura y variables de CARMEN5.BAS](docs/BASIC.md).
+- [Fuente 6x6, protocolo USR y cache](docs/FONT6.md).
+- [Catalogo y uso de escenas VRAM](docs/VRAM_SCENES.md).
+- [Coordenadas y rotulos del mapa](docs/CITYPOS.md).
+- [Formatos de los ficheros de datos](docs/DATA_FILES.md).
+- [Paleta y conversion de bancos](docs/PALETTE.md).
+- [Generacion de imagenes de ciudad](docs/CITY_IMAGES.md).
+- [Construccion completa](docs/BUILD.md).
 
 ## Construccion
 
@@ -92,5 +115,23 @@ Para regenerar la imagen de disco se necesitan `mtools` y el ensamblador
 El script ensambla `tools/FONT6.ASM`, genera `src/FONT6.BIN` y actualiza
 `dist/CARMENSANDIEGO_MSX2.dsk` con el contenido de `src/`.
 
+El listado final esta renumerado consecutivamente de 10 en 10. La utilidad
+[`tools/renumber_basic.py`](tools/renumber_basic.py) permite repetir el proceso
+sin modificar numeros dentro de cadenas o comentarios y actualiza las
+referencias de control de flujo.
+
+La regeneracion de BMP, bancos VRAM o miniimagenes requiere Python 3 y Pillow
+y se realiza por separado. Todos los comandos estan en
+[`docs/BUILD.md`](docs/BUILD.md). El directorio raiz del disco usa actualmente
+sus 112 entradas disponibles, por lo que no se pueden anadir mas ficheros a
+`src/` sin reorganizar recursos.
+
 Los ficheros `.BAS` y `.DAT` se mantienen en ASCII con finales de linea DOS
-CR/LF para conservar la compatibilidad con MSX/DOS.
+CR/LF para conservar la compatibilidad con MSX/DOS. `src/autoexec.bas` es la
+unica excepcion: es un pequeno lanzador tokenizado de MSX BASIC.
+
+## Creditos graficos
+
+Las fotografias fuente de las ciudades proceden de Wikimedia Commons. Autor,
+licencia y pagina original de cada una se conservan en
+[`IMG_CREDITS.CSV`](IMG_CREDITS.CSV).

@@ -2,7 +2,7 @@
 
 Los bancos `VRAM1.SC5`, `VRAM2.SC5` y `VRAM3.SC5` se cargan en las paginas 1,
 2 y 3 de SCREEN 5. El fichero `tools/VRAM_SCENES.INC` cataloga 55 rectangulos
-de origen preparados para futuras copias HMMM.
+de origen usados por las copias HMMM del juego.
 
 Cada registro contiene:
 
@@ -46,9 +46,8 @@ local. Su origen HMMM es `(0,768)`.
 | Detective marron | `SC_V2_DETECTIVE_MARRON_01..08` | 8 | VRAM2 |
 | Policia triste | `SC_POLICIA_TRISTE_01..10` | 10 | VRAM2/VRAM3 |
 
-Los nombres describen visualmente las secuencias; todavia no fijan su funcion
-argumental ni el orden temporal definitivo. Los destinos tampoco forman parte
-de la tabla y se decidiran cuando se implementen las animaciones.
+La tabla almacena solo los origenes y tamanos. Las coordenadas de destino, el
+sentido del movimiento y los tiempos se deciden en `src/CARMEN5.BAS`.
 
 ## Mapa en VRAM3
 
@@ -70,7 +69,7 @@ La cache solo sustituye fondo negro y no destruye pixeles visibles de esos
 frames. Los cinco frames `MIMO`, incluidos `_04` y `_05`, quedan fuera del
 rectangulo de cache.
 
-## Uso futuro desde ensamblador
+## Uso desde ensamblador
 
 La tabla usa registros de 8 bytes. Un identificador permite localizar sus
 datos con:
@@ -83,19 +82,20 @@ El orden de cada registro coincide con los campos de origen y tamano que se
 necesitaran para preparar un comando HMMM; las coordenadas de destino se
 aportaran en el momento de la copia.
 
-## Primera animacion usada
+## Animacion de introduccion
 
-La rutina BASIC `2700` utiliza dos grupos en la pantalla inicial, ambos sobre
+La rutina BASIC `3710` utiliza dos grupos en la pantalla inicial, ambos sobre
 Y=100 y sin clipping:
 
 1. `SC_V2_DETECTIVE_MARRON_01..08` cruza de izquierda a derecha.
 2. Espera 90 ticks, aproximadamente entre 1,5 y 1,8 segundos segun 60/50 Hz.
 3. `SC_V2_POLICIAS_01..05` recorre la misma trayectoria.
 
-Cada grupo mantiene su propio intervalo `AD`. Los dos grupos actuales cambian
-de fotograma cada 3 ticks y avanzan 4 pixeles. Una unica llamada de codigo
-maquina espera el VBlank, borra en negro la posicion anterior mediante HMMV y
-dibuja la siguiente mediante HMMM, reduciendo el parpadeo entre operaciones.
+Los dos grupos usan actualmente `AD=0`: cada cambio queda sincronizado por el
+VBlank de la propia llamada maquina, sin ticks BASIC adicionales, y avanza 4
+pixeles. Una unica llamada espera el VBlank, borra en negro la posicion
+anterior mediante HMMV y dibuja la siguiente mediante HMMM, reduciendo el
+parpadeo entre operaciones.
 
 ## Animacion de la primera pista tras un viaje correcto
 

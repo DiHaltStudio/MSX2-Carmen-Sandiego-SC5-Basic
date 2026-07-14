@@ -9,7 +9,7 @@
 ;   borrar = CHR$(255)+CHR$(2)+CHR$(X)+CHR$(Y)+CHR$(W)+CHR$(H)
 ;   mover  = CHR$(255)+CHR$(3)+CHR$(ID)+CHR$(NX)+CHR$(NY)
 ;            +CHR$(OX)+CHR$(OY)+CHR$(W)+CHR$(H)
-;   verde  = CHR$(255)+CHR$(5)+CHR$(X)+CHR$(Y)+texto
+;   verde  = CHR$(255)+CHR$(5)+CHR$(X)+CHR$(Y)+texto (HMMM opaco)
 ;
 ; La fuente esta en VRAM pagina 3, coordenada local (0,152), y contiene
 ; ASCII 32..93 en celdas 6x6: 42 glifos en la primera fila y 20 en la
@@ -85,7 +85,7 @@ GREEN_TEXT_PACKET:
         ld      (FONT_ROW1),de
         ld      de,938
         ld      (FONT_ROW2),de
-        ld      a,0D0h          ; HMMM opaco (prueba de rotulos del mapa)
+        ld      a,0D0h          ; HMMM opaco para los rotulos del mapa
         ld      (CMD_COMMAND),a
         xor     a
         ld      (CMD_ARGUMENT),a

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert indexed 256x256 BMP files to MSX2 SCREEN 5 VRAM dumps."""
+"""Build complete SCREEN 5 banks plus a separate MSX BASIC palette file."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Convert indexed 256x256 BMP files sharing one 16-colour palette "
-            'to files loadable with BLOAD "file.SC5",S.'
+            'to BLOAD files without overwriting Y=237; also write GAMEPAL.SC5.'
         )
     )
     parser.add_argument("inputs", nargs="+", type=Path, help="indexed 256x256 BMP files")
