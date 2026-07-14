@@ -52,14 +52,27 @@ del siguiente caso en 4 horas.
 
 ## Ejecutar el juego
 
-La imagen preparada se encuentra en:
+La imagen lista para usar es:
 
-```text
-dist/CARMENSANDIEGO_MSX2.dsk
+**[Descargar CARMENSANDIEGO_MSX2.dsk](dist/CARMENSANDIEGO_MSX2.dsk)**
+
+Para arrancar:
+
+1. Inserta o monta la imagen `.dsk` como unidad A: en un MSX2 o en un
+   emulador como openMSX.
+2. Enciende o reinicia el MSX2 con el disco insertado.
+3. Disk BASIC ejecutara automaticamente `AUTOEXEC.BAS`, que carga y ejecuta
+   `CARMEN5.BAS`. No es necesario escribir ningun comando.
+
+Si el equipo ya ha arrancado y muestra el prompt de BASIC, se puede reiniciar
+con el disco insertado o ejecutar manualmente:
+
+```basic
+RUN"AUTOEXEC.BAS"
 ```
 
-Inserta el disco en un MSX2 con unidad de disco o en un emulador como openMSX.
-El `AUTOEXEC.BAS` carga automaticamente `CARMEN5.BAS`.
+El juego carga la pantalla de apertura y espera una pulsacion antes de preparar
+los bancos graficos, la paleta y el primer caso.
 
 Requisitos del sistema:
 
