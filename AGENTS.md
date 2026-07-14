@@ -206,7 +206,7 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - `FONT6.BIN` se carga en `&HD800`, reservado mediante `CLEAR 6000,&HD7FF`.
 - La rutina `2600` llama a la funcion maquina con `USR` para escribir `T$` en `(TX,TY)` de la pagina 0.
 - La funcion maquina usa comandos HMMM de 6x6 y continua en la linea inferior si el texto supera el borde derecho.
-- La rutina `2630` usa el atlas verde de Y global 932 y LMMM con TIMP, de modo que el color 0 es transparente.
+- La rutina `2630` usa el atlas verde de Y global 932. Temporalmente copia los rotulos de destino del mapa con HMMM opaco para comparar el resultado con LMMM/TIMP.
 - Al terminar una cadena, devuelve `TX=0` y `TY` en la siguiente linea de 6 pixeles.
 - Las letras minusculas de los datos se convierten a mayusculas al calcular el glifo.
 - Los caracteres fuera del rango disponible se muestran como espacios.
@@ -232,6 +232,9 @@ El manejador de error `2200` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - `SC_V1_LADRON_VERDE_MIMO_01..05` es un unico grupo formado por los antiguos grupos `PRESO` y `LADRON_VERDE_PARADO`.
 - En la ciudad final, cada pista reproduce aleatoriamente en Y=154: hacha de izquierda a derecha a 4 ticks y 12 pixeles por paso; pistola fija en X=90, dos ciclos y 10 ticks; o cuchillo de derecha a izquierda con un unico frame y 12 pixeles por VBlank.
 - Intentar viajar desde la ciudad final reproduce el mismo sorteo de animaciones antes de indicar que se debe usar `ARRESTAR`, sin consumir horas.
+- Un intento real de arresto reproduce primero `SC_V2_DETECTIVE_MARRON_01..08` y despues `SC_V2_POLICIAS_01..05`.
+- Si la orden es correcta, `SC_V2_CAPTURA_01..06` se mueve de derecha a izquierda a 2 ticks; si apunta a otra persona, se usa `SC_POLICIA_TRISTE_01..10` en la misma direccion y a 2 ticks.
+- Al agotarse el tiempo tambien se reproduce `SC_POLICIA_TRISTE_01..10` antes de terminar la partida.
 
 ## Ficheros De Datos
 

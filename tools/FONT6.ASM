@@ -85,7 +85,7 @@ GREEN_TEXT_PACKET:
         ld      (FONT_ROW1),de
         ld      de,938
         ld      (FONT_ROW2),de
-        ld      a,098h          ; LMMM con TIMP: color 0 transparente
+        ld      a,0D0h          ; HMMM opaco (prueba de rotulos del mapa)
         ld      (CMD_COMMAND),a
         xor     a
         ld      (CMD_ARGUMENT),a

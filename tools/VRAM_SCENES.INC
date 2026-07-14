@@ -57,16 +57,16 @@ SC_V2_DETECTIVE_MARRON_05    equ 39
 SC_V2_DETECTIVE_MARRON_06    equ 40
 SC_V2_DETECTIVE_MARRON_07    equ 41
 SC_V2_DETECTIVE_MARRON_08    equ 42
-SC_LADRON_AZUL_01            equ 43
-SC_LADRON_AZUL_02            equ 44
-SC_LADRON_AZUL_03            equ 45
-SC_LADRON_AZUL_04            equ 46
-SC_LADRON_AZUL_05            equ 47
-SC_LADRON_AZUL_06            equ 48
-SC_LADRON_AZUL_07            equ 49
-SC_LADRON_AZUL_08            equ 50
-SC_LADRON_AZUL_09            equ 51
-SC_LADRON_AZUL_10            equ 52
+SC_POLICIA_TRISTE_01         equ 43
+SC_POLICIA_TRISTE_02         equ 44
+SC_POLICIA_TRISTE_03         equ 45
+SC_POLICIA_TRISTE_04         equ 46
+SC_POLICIA_TRISTE_05         equ 47
+SC_POLICIA_TRISTE_06         equ 48
+SC_POLICIA_TRISTE_07         equ 49
+SC_POLICIA_TRISTE_08         equ 50
+SC_POLICIA_TRISTE_09         equ 51
+SC_POLICIA_TRISTE_10         equ 52
 SC_V1_HACHA_04               equ 53
 SC_V3_MAPA_MUNDO             equ 54
 
@@ -105,7 +105,7 @@ VRAM_SCENE_TABLE:
         word 96,512,48,49      ; 26 SC_V2_CAPTURA_03
         word 144,512,48,49     ; 27 SC_V2_CAPTURA_04
         word 192,512,48,49     ; 28 SC_V2_CAPTURA_05
-        word 0,561,50,50       ; 29 SC_V2_CAPTURA_06
+        word 0,561,48,49       ; 29 SC_V2_CAPTURA_06
         word 48,561,50,50      ; 30 SC_V2_POLICIAS_01
         word 98,561,50,50      ; 31 SC_V2_POLICIAS_02
         word 148,561,50,50     ; 32 SC_V2_POLICIAS_03
@@ -122,17 +122,17 @@ VRAM_SCENE_TABLE:
         word 100,660,50,50     ; 41 SC_V2_DETECTIVE_MARRON_07
         word 150,660,40,50     ; 42 SC_V2_DETECTIVE_MARRON_08
 
-        ; Ladron azul: 7 fotogramas en VRAM2 y 3 en VRAM3.
-        word 190,660,42,50     ; 43 SC_LADRON_AZUL_01
-        word 0,710,40,45       ; 44 SC_LADRON_AZUL_02
-        word 38,710,40,45      ; 45 SC_LADRON_AZUL_03
-        word 78,710,40,45      ; 46 SC_LADRON_AZUL_04
-        word 116,710,40,45     ; 47 SC_LADRON_AZUL_05
-        word 156,710,40,45     ; 48 SC_LADRON_AZUL_06
-        word 194,710,40,45     ; 49 SC_LADRON_AZUL_07
-        word 0,768,40,45       ; 50 SC_LADRON_AZUL_08
-        word 38,768,40,45      ; 51 SC_LADRON_AZUL_09
-        word 78,768,40,45      ; 52 SC_LADRON_AZUL_10
+        ; Policia triste: 7 fotogramas en VRAM2 y 3 en VRAM3.
+        word 192,660,40,45     ; 43 SC_POLICIA_TRISTE_01
+        word 0,710,40,45       ; 44 SC_POLICIA_TRISTE_02
+        word 40,710,40,45      ; 45 SC_POLICIA_TRISTE_03
+        word 80,710,40,45      ; 46 SC_POLICIA_TRISTE_04
+        word 80+40,710,40,45     ; 47 SC_POLICIA_TRISTE_05
+        word 80+40+40,710,40,45     ; 48 SC_POLICIA_TRISTE_06
+        word 80+40+40+40,710,40,45     ; 49 SC_POLICIA_TRISTE_07
+        word 0,768,40,45       ; 50 SC_POLICIA_TRISTE_08
+        word 40,768,40,45      ; 51 SC_POLICIA_TRISTE_09
+        word 80,768,40,45      ; 52 SC_POLICIA_TRISTE_10
         word 120,768,44,44     ; 53 SC_V1_HACHA_04
 
         ; VRAM3: mapa del mundo, Y local 45..151.

@@ -28,7 +28,7 @@ intencionado para mantener la alineacion requerida por SCREEN 5.
 | `VRAM2` | 2 | `Y local + 512` |
 | `VRAM3` | 3 | `Y local + 768` |
 
-Ejemplo: el primer fotograma del ladron azul en VRAM3 empieza en `(0,0)`
+Ejemplo: el primer fotograma del policia triste en VRAM3 empieza en `(0,0)`
 local. Su origen HMMM es `(0,768)`.
 
 ## Grupos clasificados
@@ -44,7 +44,7 @@ local. Su origen HMMM es `(0,768)`.
 | Captura | `SC_V2_CAPTURA_01..06` | 6 | VRAM2 |
 | Grupo de policias | `SC_V2_POLICIAS_01..05` | 5 | VRAM2 |
 | Detective marron | `SC_V2_DETECTIVE_MARRON_01..08` | 8 | VRAM2 |
-| Ladron azul agachado | `SC_LADRON_AZUL_01..10` | 10 | VRAM2/VRAM3 |
+| Policia triste | `SC_POLICIA_TRISTE_01..10` | 10 | VRAM2/VRAM3 |
 
 Los nombres describen visualmente las secuencias; todavia no fijan su funcion
 argumental ni el orden temporal definitivo. Los destinos tampoco forman parte
@@ -131,3 +131,20 @@ rutina BASIC la intercala despues de los identificadores 13, 14 y 15.
 Intentar usar `VIAJAR` cuando el ladron ya esta en la ciudad reproduce el
 mismo sorteo antes de indicar al jugador que debe usar `ARRESTAR`; no consume
 horas.
+
+## Animaciones de arresto y derrota
+
+Un intento de arresto en la ciudad final y con una orden emitida reproduce
+primero la misma secuencia de la introduccion:
+
+1. `SC_V2_DETECTIVE_MARRON_01..08` de izquierda a derecha.
+2. `SC_V2_POLICIAS_01..05` de izquierda a derecha.
+
+Despues se muestra el desenlace:
+
+- Orden correcta: `SC_V2_CAPTURA_01..06` se mueve de derecha a izquierda en
+  Y=100, con 2 ticks por frame y 4 pixeles por paso.
+- Orden contra la persona equivocada: `SC_POLICIA_TRISTE_01..10` se mueve de
+  derecha a izquierda en Y=100, con 2 ticks por frame y 4 pixeles por paso.
+- Tiempo agotado: reproduce directamente `SC_POLICIA_TRISTE_01..10` con los
+  mismos parametros antes de finalizar la partida.

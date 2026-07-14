@@ -55,9 +55,10 @@ U$=CHR$(255)+CHR$(5)+CHR$(TX)+CHR$(TY)+T$:U$=USR(U$)
 ```
 
 El atlas verde empieza en la coordenada global `(0,932)`, equivalente a
-`(0,164)` de la pagina 3. Cada glifo se copia con LMMM y operacion TIMP
-(`R#46=&H98`): los pixeles de origen con color 0 conservan el mapa y los
-pixeles de color 11 forman la letra.
+`(0,164)` de la pagina 3. Como prueba temporal para los nombres de destino del
+mapa, cada glifo se copia con HMMM opaco (`R#46=&HD0`). Por tanto, el color 0
+del atlas tambien se copia y sustituye los pixeles del mapa situados debajo de
+cada celda 6x6.
 
 ## Escenas y borrado rapido
 
