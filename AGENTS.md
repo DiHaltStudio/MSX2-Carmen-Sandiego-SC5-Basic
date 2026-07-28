@@ -30,7 +30,9 @@ Crear una version simplificada tipo "Where in the World is Carmen Sandiego" para
 - Si el jugador se sale de la ruta correcta, una de las opciones de vuelo permite volver a la ciudad de la pista activa.
 - La orden de arresto se calcula por filtros parciales, no por seleccion directa de sospechoso.
 - La lista de sospechosos marca con `*` los detenidos y el calculo de orden ignora esos detenidos.
-- Una partida completa requiere 5 detenciones correctas. Tras cada arresto correcto se genera un nuevo caso aleatorio.
+- Una partida completa requiere 7 detenciones correctas. Tras cada arresto correcto se genera un nuevo caso aleatorio. Carmen Sandiego queda excluida de los seis primeros sorteos y es siempre el objetivo del septimo caso.
+- Tras detener a Carmen se muestra el final de victoria, se espera una tecla y se reinicia el programa desde la apertura.
+- Tras una orden contra la persona equivocada o agotar el tiempo se muestra la derrota, se espera una tecla y tambien se reinicia el programa desde la apertura.
 - La dificultad sube reduciendo el tiempo limite de cada caso.
 
 ## Requisito De Formato
@@ -69,7 +71,7 @@ El jugador empieza en una ciudad aleatoria y debe seguir una ruta de pistas:
 5. Calcular orden de arresto.
 6. Llegar a la ciudad final.
 7. Arrestar con la orden correcta.
-8. Repetir hasta lograr 5 detenciones.
+8. Repetir hasta lograr 7 detenciones; Carmen Sandiego es siempre la ultima.
 
 Cada accion consume tiempo:
 
@@ -93,6 +95,8 @@ empieza con 70 horas y cada nueva detencion reduce el siguiente limite en 4:
 - Caso 3: 62 horas.
 - Caso 4: 58 horas.
 - Caso 5: 54 horas.
+- Caso 6: 50 horas.
+- Caso 7: 46 horas.
 
 ## Orden De Arresto
 
@@ -239,9 +243,9 @@ El manejador de error `3170` debe ejecutar `SET PAGE 0,0` antes de mostrar el er
 - Ambos grupos avanzan 4 pixeles por VBlank; actualmente usan `AD=0`, sin espera BASIC adicional entre cambios.
 - Cada grupo configura su propio valor `AD`; los tiempos de otros grupos se decidiran mas adelante.
 - La rutina maquina dibuja escenas con HMMM y borra el rectangulo anterior en negro con HMMV.
-- Tras un viaje correcto, la primera pista seleccionada reproduce en Y=154 un grupo aleatorio: cabeza fija en X=90, dos ciclos y 5 ticks; carrera verde de derecha a izquierda a 1 tick; o mimo verde de izquierda a derecha a 1 tick.
+- Tras un viaje correcto, la primera pista seleccionada reproduce `PLAY"O3L32CDCDEEDL2F"` y despues, en Y=154, un grupo aleatorio: cabeza fija en X=90, dos ciclos y 5 ticks; carrera verde de derecha a izquierda a 1 tick; o mimo verde de izquierda a derecha a 1 tick.
 - `SC_V1_LADRON_VERDE_MIMO_01..05` es un unico grupo formado por los antiguos grupos `PRESO` y `LADRON_VERDE_PARADO`.
-- En la ciudad final, cada pista reproduce aleatoriamente en Y=154: hacha de izquierda a derecha a 4 ticks y 12 pixeles por paso; pistola fija en X=90, dos ciclos y 10 ticks; o cuchillo de derecha a izquierda con un unico frame y 12 pixeles por VBlank.
+- En la ciudad final, cada pista reproduce `PLAY"O6L32FFEEECO7DEO8FD"` y despues, aleatoriamente en Y=154: hacha de izquierda a derecha a 4 ticks y 12 pixeles por paso; pistola fija en X=90, dos ciclos y 10 ticks; o cuchillo de derecha a izquierda con un unico frame y 12 pixeles por VBlank.
 - Intentar viajar desde la ciudad final reproduce el mismo sorteo de animaciones antes de indicar que se debe usar `ARRESTAR`, sin consumir horas.
 - Un intento real de arresto reproduce primero `SC_V2_DETECTIVE_MARRON_01..08` y despues `SC_V2_POLICIAS_01..05`.
 - Si la orden es correcta, `SC_V2_CAPTURA_01..06` se mueve de derecha a izquierda a 2 ticks; si apunta a otra persona, se usa `SC_POLICIA_TRISTE_01..10` en la misma direccion y a 2 ticks.

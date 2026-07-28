@@ -81,6 +81,7 @@ destino inexistente.
 | `R%(1..RL)` | Ruta correcta del caso |
 | `ST` | Posicion alcanzada en la ruta |
 | `TH` | Sospechoso objetivo |
+| `CS` | Indice de Carmen Sandiego |
 | `WA` | Sospechoso indicado por la orden, o 0 |
 | `AR` | Detenciones conseguidas |
 | `TM` / `TL` | Tiempo consumido y limite |
@@ -102,7 +103,12 @@ TL=72-(AR*4+2)
 Investigar suma 2 horas, viajar 6, calcular una orden 1 y arrestar en una
 ciudad incorrecta 2. `NO VIAJAR` y un intento sin orden no consumen horas. El
 juego termina al superar el limite (`TM>TL`) o tras una orden contra la persona
-equivocada. Cinco detenciones correctas completan la partida.
+equivocada. Siete detenciones correctas completan la partida. Carmen Sandiego
+se excluye del sorteo de los seis primeros casos y es siempre el objetivo del
+septimo. Tras la pantalla de victoria y su pausa, `RUN` reinicia el programa
+desde la apertura y limpia todo el estado de la partida anterior. Una orden
+contra la persona equivocada o agotar el tiempo hacen el mismo reinicio despues
+de mostrar su derrota y esperar una tecla.
 
 ## Orden y datos en disco
 
@@ -113,7 +119,8 @@ Antes de recorrer `CITYPOS.DAT`, la rutina del mapa ejecuta `FRE("")` para
 compactar el area de cadenas y recuperar temporales ya abandonados.
 
 La orden acepta filtros parciales. Se emite solo cuando exactamente un
-sospechoso no detenido coincide con todos los filtros introducidos.
+sospechoso no detenido coincide con todos los filtros introducidos. La lista
+de sospechosos muestra `*` junto a cada detenido.
 
 ## Graficos
 

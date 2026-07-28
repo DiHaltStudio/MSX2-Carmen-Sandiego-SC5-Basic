@@ -9,7 +9,9 @@ acelerar el texto y las copias de VRAM en `SCREEN 5`.
 
 El objetivo es seguir las pistas de ciudad en ciudad, identificar al sospechoso,
 emitir una orden correcta y detenerlo antes de que se agote el tiempo. Para
-completar la partida hay que resolver cinco casos.
+completar la partida hay que resolver siete casos. Carmen Sandiego es siempre
+el objetivo del ultimo. Tras completar el juego y confirmar la pantalla final,
+se vuelve a la apertura para comenzar una partida nueva.
 
 > Proyecto homenaje sin afiliacion con los propietarios de la franquicia
 > Carmen Sandiego.

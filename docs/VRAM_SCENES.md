@@ -102,7 +102,8 @@ parpadeo entre operaciones.
 Al llegar a la siguiente ciudad correcta no se muestra ningun mensaje de
 confirmacion adicional. La primera opcion valida elegida en `INVESTIGAR`
 reproduce aleatoriamente uno de estos grupos en Y=154 y despues muestra la
-pista normalmente:
+pista normalmente. Justo antes del sorteo reproduce
+`PLAY"O3L32CDCDEEDL2F"`:
 
 - `SC_V1_CABEZA_01..04`: fija en X=90, repite dos veces la secuencia y usa
   5 ticks por frame.
@@ -118,7 +119,8 @@ antes de investigar sustituye el estado de llegada anterior.
 
 Cuando el ladron ya esta en la ciudad actual, cada opcion solicitada en
 `INVESTIGAR` reproduce aleatoriamente uno de estos grupos en Y=154 antes de
-mostrar la pista:
+mostrar la pista. Justo antes del sorteo reproduce
+`PLAY"O6L32FFEEECO7DEO8FD"`:
 
 - `SC_V1_HACHA_01..04`: de izquierda a derecha, con 4 ticks por frame y un
   avance de 12 pixeles por paso.
